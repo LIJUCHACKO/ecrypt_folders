@@ -1,0 +1,74 @@
+##!/bin/bash
+trig=`whoami`
+if [ "$trig" != "root" ]
+then
+	echo "Run as a root user"
+	exit 1 
+fi
+if ! [ -f /usr/bin/ecryptfs_mount_mine ]; then
+  cp  ecryptfs_mount_mine /usr/bin/ecryptfs_mount_mine
+  cp  encrypt_folder /usr/bin/encrypt_folder
+  echo "ALL ALL = NOPASSWD: /usr/bin/encrypt_folder">>/etc/sudoers
+  chmod a+x /usr/bin/ecrypfs_mount_mine
+  chmod a+x /usr/bin/encrypt_folder
+else
+   echo "Skipping file copying , already present"
+fi
+read -p "Enter your user name:" user
+if ! [ -d /home/$user ]; then
+    echo "/home/$user doesnot exist"
+    exit 1
+fi
+
+encryptfolder=/home/"$user"/.ecryptfs
+if ! [ -f $encryptfolder/my_wrapped-passphrase ]; then 
+	mkdir $encryptfolder
+	echo "Setting up...."
+	echo "Enter password:"
+	read -p "" -s wrap_pass
+	echo "Reenter password:"
+	read -p "" -s rewrap_pass
+	if [ $wrap_pass = $rewrap_pass  ]; then
+	  wrap_phrase=`date|md5sum`
+	  wrap_phraseextr=(${wrap_phrase// /})
+          wrap_phrase=${wrap_phraseextr[0]}
+	else
+	    echo "Passwords not matching"
+	    exit 1
+	fi
+      printf "%s\n%s" "$wrap_phrase" "$wrap_pass" | ecryptfs-wrap-passphrase "$encryptfolder/my_wrapped-passphrase"
+      fnek_out=`printf "%s" "$wrap_phrase" |ecryptfs-add-passphrase --fnek`
+      ##extracting fnek from  [ ] 
+      extractfnek=(${fnek_out//[/})
+      fnek_tmp=${extractfnek[6]}
+      fnek_value=(${fnek_tmp//]/})
+      echo "${fnek_value[0]}">$encryptfolder/my_fnek
+      echo "/home/$user/folder1" >> $encryptfolder/folder_list
+      echo "/home/$user/folder2" >> $encryptfolder/folder_list
+      echo " logout from root "
+      echo " Create empty folders and list them in  $encryptfolder/folder_list "
+      echo " & run ecrypfs_mount_mine -m as $user"
+
+      chown -R $user  $encryptfolder
+      chmod -R g+rw   $encryptfolder
+else
+      echo "Enter password:"
+      read -p "" -s wrap_pass
+      echo "Reenter password:"
+       read -p "" -s rewrap_pass
+	if [ $wrap_pass = $rewrap_pass  ]; then
+	    passwd=`printf "%s" "$wrap_pass" | ecryptfs-unwrap-passphrase "$encryptfolder/my_wrapped-passphrase"`
+	    passextr=(${passwd// /})
+	    echo ${passextr[1]}
+	    fnek_out=`printf "%s" "${passextr[1]}" |ecryptfs-add-passphrase --fnek`
+	    ##extracting fnek from  [ ] 
+	    extractfnek=(${fnek_out//[/})
+	    fnek_tmp=${extractfnek[6]}
+	    fnek_value=(${fnek_tmp//]/})
+            echo "${fnek_value[0]}">$encryptfolder/my_fnek
+	else
+	    echo "Passwords not matching"
+	    exit 1
+	fi
+     echo "User configuration already present, reinserted user keyring and generated fnek file"
+fi

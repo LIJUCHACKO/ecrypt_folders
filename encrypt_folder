@@ -1,0 +1,74 @@
+##!/bin/bash
+trig=`whoami`
+encryptfolder="$2"
+if [ "$trig" != "root" ]
+then
+	echo "Run as a root user"
+	exit 1 
+fi
+if ! [ -n "$2" ]; then 
+  echo Give ecryptfs settings folder path
+  exit 0
+fi 
+
+if [ "$1" = -m ]; then
+  if ! [ -n "$3" ]; then 
+    echo Give user name
+    exit 0
+  fi
+  
+  user="$3"
+  echo "------------------Folder Locker-----------------------"
+  echo "--------Files are listed in $encryptfolder/folder_list---"
+  echo Enter passphrase:
+  PASSWRD=`ecryptfs-unwrap-passphrase "$encryptfolder"/my_wrapped-passphrase | sed -n 2p `
+  if ! [ -n "$PASSWRD" ];then
+      echo WRONG PASSWORD
+      exit 1
+  fi
+fi
+FNEKSIG=`sed -n 1p "$encryptfolder"/my_fnek`
+count=1
+DIR=`sed -n "$count"p "$encryptfolder"/folder_list`
+while [ -n "$DIR" ]
+do 
+      echo "$DIR"-: Do you want to do[y/n]?
+      read yes
+      if [ "$yes" = y ];then
+
+      case $1 in
+	 "-m")
+	      if [ -d "$DIR" ]; then 
+		if [ "$(ls -A $DIR)" ] ; then
+		      echo "$DIR" not empty or mounted
+		      exit 1
+		fi
+	      else
+		echo make directory "$DIR"
+		exit 1
+	      fi
+	      if ! [ -d "$DIR"_ecrptfs ]; then 
+		mkdir "$DIR"_ecrptfs
+		chown "$user"  "$DIR"_ecrptfs
+	      fi
+	      chattr -i "$DIR"_ecrptfs
+	      chattr -i "$DIR"
+	      echo mounting "$DIR"
+	      mount -t ecryptfs  "$DIR"_ecrptfs "$DIR" -o key=passphrase:passphrase_passwd="$PASSWRD",ecryptfs_cipher=aes,ecryptfs_key_bytes=16,ecryptfs_passthrough=no,ecryptfs_enable_filename_crypto=yes,ecryptfs_fnek_sig="$FNEKSIG"
+	      #chown -R "$user" "$DIR"
+		 ;;
+	      
+	 "-um")
+	    echo unmounting "$DIR"
+	    chattr +i "$DIR"_ecrptfs
+	    umount "$DIR"
+	    chattr +i  "$DIR";;	     
+	*)
+	    echo INVALID OPTION
+	    exit 1;;
+      esac
+      fi 
+      count=`expr $count + 1`
+      DIR=`sed -n "$count"p "$encryptfolder"/folder_list`
+done 
+exit 0
