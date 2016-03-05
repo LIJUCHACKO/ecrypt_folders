@@ -31,12 +31,12 @@ Usage
   5.Use 'ecryptfs_mount_mine -m ' to mount folders.
     Give 'y' answer to the corresponding folders
     
-  6.Your password is actuall the Wrapping passphrase   
+  6.Your password is actually the Wrapping passphrase   
   
-  7.If you are getting any mounting error due to keyring rerun install script
+  7.If you are getting any mounting error regarding keyring , rerun install script
 
   
-Migrating folder to new system or new user
+Migrating to new system or new user
 -----------------------------------------------------
   If you want to open encrypted folder from another user or after OS reinstallation do the following
   
