@@ -30,27 +30,27 @@ After mounting you can use the folder as usual. After unmounting or after restar
 
 Note
 -------------------------------------------
-  1.Always mount folders before using them.
+  1. Always mount folders before using them.
   
-  2.Additional folders can be added in .ecryptfs/folder_list later, but the folder should be empty to start with.
+  2. Additional folders can be added in .ecryptfs/folder_list later, but the folder should be empty to start with.
   
-  3.Keep a backup of .ecryptfs folder.
+  3. Keep a backup of .ecryptfs folder.
   
-  4.Your encrypted contents are kept in '<folder name>_ecrptfs' folder, do not delete or rename or relocate them
+  4. Your encrypted contents are kept in '<folder name>_ecrptfs' folder, do not delete or rename or relocate them
   
-  5.Contents of folder will not be visible if folder is not mounted 
+  5. Contents of folder will not be visible if folder is not mounted 
   
-  6.Use 'ecryptfs_mount_mine -m ' to mount folders.
+  6. Use 'ecryptfs_mount_mine -m ' to mount folders.
     Give 'y' answer to the corresponding folders
     
-  7..Use 'ecryptfs_mount_mine -um ' to umount folders.
+  7. Use 'ecryptfs_mount_mine -um ' to umount folders.
     Give 'y' answer to the corresponding folders
     
-  8.Your password is actually the Wrapping passphrase   
+  8. Your password is actually the Wrapping passphrase   
   
-  9.If you are getting any mounting error regarding keyring , rerun install script
+  9. If you are getting any mounting error regarding keyring , rerun install script
   
-  10.Install script is required to setup encryption for another user on the same PC.
+  10. Install script is required to setup encryption for another user on the same PC.
 
   
 Migrating to new system or new user
