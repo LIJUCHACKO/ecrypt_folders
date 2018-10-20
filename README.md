@@ -19,7 +19,7 @@ Installation script will do following things for you
 Create empty folders and put the absolute path of the folders in .ecryptfs/folder_list (in your home folder), one below the other
 
 Run
-````
+```
     ecryptfs_mount_mine -m
 ```
 Enter password given during installation processes and proceed. Folders will be listed one after the other.
