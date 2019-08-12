@@ -9,7 +9,7 @@ if ! [ -f /usr/bin/ecryptfs_mount_mine ]; then
   cp  ecryptfs_mount_mine /usr/bin/ecryptfs_mount_mine
   cp  encrypt_folder /usr/bin/encrypt_folder
   echo "ALL ALL = NOPASSWD: /usr/bin/encrypt_folder">>/etc/sudoers
-  chmod a+x /usr/bin/ecrypfs_mount_mine
+  chmod a+x /usr/bin/ecryptfs_mount_mine
   chmod a+x /usr/bin/encrypt_folder
 else
    echo "Skipping file copying , already present"

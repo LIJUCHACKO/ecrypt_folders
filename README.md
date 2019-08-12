@@ -4,6 +4,7 @@ Installation
 ------------------------------------
 Run install script in this folder
 ```
+chmod 777 install
 sudo ./install 
 ```
 Installation script will do following things for you
